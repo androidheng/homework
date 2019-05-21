@@ -116,6 +116,14 @@ public class SworkServiceImpl implements SworkService {
 			return new PageResult(page.getTotal(), page.getResult());
 		}
 
+		@Override
+		public List<TbSwork> findExchange(Integer id) {
+			TbSworkExample example=new TbSworkExample();
+			Criteria criteria = example.createCriteria();
+			criteria.andTtidEqualTo(id);
+			return sworkMapper.selectByExample(example);
+		}
+
 
 	
 	

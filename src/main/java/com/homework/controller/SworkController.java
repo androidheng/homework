@@ -145,7 +145,21 @@ public class SworkController {
 			return new Result(false, "修改失败");
 		}
 	}	
-	
+	@RequestMapping("/stuscore")
+	public Result stuscore(@RequestBody TbSwork swork,HttpSession session){
+		try {
+			TbUser user=(TbUser) session.getAttribute("student");
+			user=new TbUser();
+			user.setId(1);
+			swork.setUid2(user.getId());;
+			sworkService.update(swork);
+			return new Result(true, "修改成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false, "修改失败");
+		}
+	}	
+
 	/**
 	 * 获取实体
 	 * @param id

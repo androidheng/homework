@@ -98,6 +98,21 @@ public class TeacherController {
 		}
 		
 	}	
+	@RequestMapping("/myinfo")
+	public Result myinfo(HttpSession session){
+		TbTeacher loginTeacer=(TbTeacher) session.getAttribute("teacher");
+		if(loginTeacer!=null) {
+			try {
+				return new Result(true, loginTeacer);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return new Result(false, "修改失败");
+			}	
+		}else {
+			return new Result(false, "请先登录");
+		}
+		
+	}	
 	
 	/**
 	 * 获取实体

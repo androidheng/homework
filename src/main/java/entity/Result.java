@@ -12,12 +12,17 @@ public class Result implements Serializable{
 	private boolean success;
 	private boolean flag;
 	private String message;
-	
+	private Object data;
 	public Result(boolean success, String message) {
 		super();
 		this.success=success;
 		this.flag = success;
 		this.message = message;
+	}
+	public Result(boolean success, Object data) {
+		super();
+		this.success=success;
+		this.data = data;
 	}
 	public boolean isFlag() {
 		return flag;
@@ -37,6 +42,12 @@ public class Result implements Serializable{
 	}
 	public void setSuccess(boolean success) {
 		this.success = success;
+	}
+	public Object getData() {
+		return data;
+	}
+	public void setData(Object data) {
+		this.data = data;
 	}
 	
 }

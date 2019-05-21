@@ -1,10 +1,14 @@
 package com.homework.controller;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.homework.pojo.TbTeacher;
 import com.homework.pojo.TbUser;
 import com.homework.service.UserService;
 
@@ -110,5 +114,19 @@ public class UserController {
 	public PageResult search(@RequestBody TbUser user, int page, int rows  ){
 		return userService.findPage(user, page, rows);		
 	}
-	
+	@RequestMapping("/myinfo")
+	public Result myinfo(HttpSession session){
+		TbUser loginUser=(TbUser) session.getAttribute("student");
+		if(loginUser!=null) {
+			try {
+				return new Result(true, loginUser);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return new Result(false, "修改失败");
+			}	
+		}else {
+			return new Result(false, "请先登录");
+		}
+		
+	}
 }
