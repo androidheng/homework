@@ -16,16 +16,15 @@
           <form class="layui-form" action="" lay-filter="formTest" id="addGoodsForm">
           
            <div class="layui-form-item">
-             <label class="layui-form-label">作业内容</label>
-                 <div class="layui-input-inline">
-                   <input type="text" name="content" disabled id="content"  autocomplete="off" class="layui-input">
-                 </div>
+            <label class="layui-form-label">选择文件</label>
+            <div class="layui-input-inline">
+              <button type="button" class="layui-btn" id="test1">
+                     <i class="layui-icon">&#xe67c;</i>上传作业
+              </button>
+            </div>
            </div>
            <div class="layui-form-item">
-              <label class="layui-form-label">作业图片</label>
-                <div class="layui-input-block" id="logo">
-                   <img src=""></img>
-               </div>
+              <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
            </div>
         </form>
        
@@ -35,9 +34,9 @@
             <div class="pagewrap">
                 <span class="layui-breadcrumb">
                   <a>首页</a>
-                  <a>课程</a>
+                  <a>作业</a>
                 </span>
-                <h2 class="title">课程信息</h2>
+                <h2 class="title">作业信息</h2>
             </div>
         </div>
         <div class="layui-row">
@@ -50,30 +49,39 @@
             </div>
         </div>
     </div>
+  
    </div>
   	<script src="<%=basePath%>assets/layui.all.js"></script>
     
     <script type="text/html" id="barDemo">
-       <a class="layui-btn layui-btn-xs" lay-event="checkDetail">查看详情</a>
-       {{#  if(d.stat == 0){ }}
-		  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">选课</a>
+     
+       {{#  if(d.tstatus==0){ }}
+		  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">提交作业</a>
 	   {{#  } else { }}
 		
 	   {{#  } }}
     </script>
+    <script type="text/html" id="titleTpl">
+  {{#  if(d.tstatus == 0){ }}
+          未批改
+  {{#  } else { }}
+         已批改
+  {{#  } }}
+</script>
    
     <script>
   layui.use('table', function(){
       var table = layui.table,form = layui.form,$=layui.$;
+      var urlPath = ''
        //展示已知数据
        table.render({
            elem: '#demo'
-         
-          ,url:'<%=basePath%>course/searchcourse'
+          ,url:'<%=basePath%>swork/searchwork'
           ,cols: [[ //标题栏
-             {field: 'coursename', title: '课程名称', }
-            ,{field: 'tname', title: '老师名字'}
-            
+             {field: 'workname', title: '作业名称', }
+            ,{field: 'content', title: '作业内容'}
+            ,{field: 'endtime', title: '截止时间'}
+            ,{field: 'tstatus', title: '批改状态',templet: '#titleTpl'}
             ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
          ]]
         ,skin: 'line' //表格风格
@@ -82,13 +90,7 @@
         ,limits: [5, 7, 10]
         ,limit: 5 //每页默认显示的数量
        });
-       //重新渲染表单
-       function renderForm(){
-        layui.use('form', function(){
-        var form = layui.form;//高版本建议把括号去掉，有的低版本，需要加()
-        form.render();
-        });
-       }
+      
       
        //打开添加站点弹窗
        function getCitys(data){
@@ -105,8 +107,50 @@
   	        ,moveType: 1 //拖拽模式，0或者1
   	        ,content: $("#box")
   	        ,success:function(layero, index){
-  	        	$("#logo img").attr('src',data.logo) 
-  	        	$("#content").val(data.content) 
+  	        	urlPath = ''
+  	        	layui.use('upload', function(){
+  	        	  var upload = layui.upload;
+  	        	
+  	        	  //执行实例
+  	        	  var uploadInst = upload.render({
+  	        	    elem: '#test1' //绑定元素
+  	        	    ,accept:'file'
+  	        	    ,url: '<%=basePath%>upload' //上传接口
+  	        	    ,done: function(res){
+  	        	    	urlPath = res.message
+  	        	    	
+  	        	      //上传完毕回调
+  	        	    }
+  	        	    ,error: function(){
+  	        	      //请求异常回调
+  	        	    }
+  	        	  });
+  	        	});
+  	           //监听提交
+                form.on('submit(demo1)', function(data){
+                 if(!urlPath)return alert('请先上传作业')
+              	 let parames = {
+              		 ttid:row.id,
+              		 url:urlPath,
+              	 }
+              	  $.ajax({
+                        url:"<%=basePath%> swork/add",
+                        type:'post',//method请求方式，get或者post
+                        dataType:'json',//预期服务器返回的数据类型
+                        data:JSON.stringify(parames),
+                        contentType: "application/json; charset=utf-8",
+                        success:function(res){//res为相应体,function为回调函数
+                      	  layer.close(index)
+                          $(".layui-laypage-btn")[0].click();
+                        },
+                        error:function(){
+                         
+                        }
+                    });
+                
+                  return false;
+                });
+  	       
   	         
   	        	
   	        }
@@ -122,21 +166,9 @@
        table.on('tool(demo)', function(obj){
          var data = obj.data;
          if(obj.event === 'del'){
-        	 $.ajax({
-                 url:"<%=basePath%>select/add",
-                 type:'post',//method请求方式，get或者post
-                 dataType:'json',//预期服务器返回的数据类型
-                 data:JSON.stringify({cid:data.id}),
-                 contentType: "application/json; charset=utf-8",
-                 success:function(res){//res为相应体,function为回调函数
-              	   $(".layui-laypage-btn")[0].click();
-                 },
-                 error:function(){
-                     layer.alert('操作失败！！！',{icon:5});
-                 }
-               });
-         } else {
         	 getCitys(data)
+         } else {
+        	 
          }
        });
      
