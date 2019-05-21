@@ -25,7 +25,7 @@
                 <li class="layui-nav-item">
                     <a href="javascript:;">BieJun</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="">帮助中心</a></dd>
+                        <dd><a href="<%=basePath%>student/updatePwa.jsp">修改密码</a></dd>
                         <dd><a href="<%=basePath%>login.jsp">退出</a></dd>
                     </dl>
                 </li>
