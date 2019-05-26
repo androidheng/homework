@@ -62,6 +62,10 @@ public class SworkController {
 			WorkVo vo=new WorkVo();
 			BeanUtils.copyProperties(tbTwork, vo);
 			  TbSwork swork = sworkService.findTtid(user.getId(),tbTwork.getId());
+			  int end=DateUtils.compare_date(tbTwork.getEndtime());
+			  if(end<0) {
+				  vo.setOver("Y");
+			  }
 			if(swork==null) {
 				vo.setStatus("未提交");
 			}else {
@@ -125,7 +129,37 @@ public class SworkController {
 		}
 		
 	}
-	
+	/**
+	 * 设置学生批改作业
+	 * @param swork
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/exchange")
+	public Result exchange(@RequestBody TbTwork tbTwork,HttpSession session){
+		try {
+			List<TbSwork> list=sworkService.findExchange(tbTwork.getId());
+			if(list.size()==0||list.size()==1) {
+				return new Result(false, "作业分配失败!");
+			}
+			for(int i=0;i<list.size();i++) {
+				if(i==list.size()-1) {//将最后一个人的作业分给第一个学生
+					list.get(i).setUid2(list.get(0).getUid());
+				}else {
+					list.get(i).setUid2(list.get(i+1).getUid());//其他人的作业依次分给后面一个人
+				}
+				
+			}
+			for (TbSwork tbSwork : list) {
+				sworkService.update(tbSwork);
+			}
+			
+			return new Result(true, "修改成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false, "修改失败");
+		}
+	}	
 	/**
 	 * 修改
 	 * @param swork
@@ -200,9 +234,10 @@ public class SworkController {
 	   @RequestMapping("/fileDownLoad")
 	    public ResponseEntity<byte[]> fileDownLoad(Integer id,HttpServletRequest request) throws Exception{
 	      TbSwork swork = sworkService.findOne(id);
-	      ServletContext servletContext = request.getServletContext();
+	     // ServletContext servletContext = request.getServletContext();
 	      String fileName=swork.getUrl();
-	      String realPath = servletContext.getRealPath("/file/"+fileName);//得到文件所在位置
+	      /* String realPath = servletContext.getRealPath("/file/"+fileName);*///得到文件所在位置
+	      String realPath=request.getSession().getServletContext().getRealPath("file/"+fileName);
 	        InputStream in=new FileInputStream(new File(realPath));//将该文件加入到输入流之中
 	         byte[] body=null;
 	         body=new byte[in.available()];// 返回下一次对此输入流调用的方法可以不受阻塞地从此输入流读取（或跳过）的估计剩余字节数
@@ -218,23 +253,22 @@ public class SworkController {
 	        
 	        return response;
 	    } 
-	    @RequestMapping("/testFileDownLoad")
-	    public ResponseEntity<byte[]> testFileDownLoad(HttpServletRequest request) throws Exception{
-	    	
-	    	ServletContext servletContext = request.getServletContext();
-	    	String fileName="swapp.docx";
-	    	String realPath = servletContext.getRealPath("/file/"+fileName);//得到文件所在位置
-	    	InputStream in=new FileInputStream(new File(realPath));//将该文件加入到输入流之中
-	    	byte[] body=null;
-	    	body=new byte[in.available()];// 返回下一次对此输入流调用的方法可以不受阻塞地从此输入流读取（或跳过）的估计剩余字节数
-	    	in.read(body);//读入到输入流里面
-	    	
-	    	fileName=new String(fileName.getBytes("gbk"),"iso8859-1");//防止中文乱码
-	    	HttpHeaders headers=new HttpHeaders();//设置响应头
-	    	headers.add("Content-Disposition", "attachment;filename="+fileName);
-	    	HttpStatus statusCode = HttpStatus.OK;//设置响应吗
-	    	ResponseEntity<byte[]> response=new ResponseEntity<byte[]>(body, headers, statusCode);
-	    	return response;
-	    } 
+	    /**
+	     * 学生作业查找
+	     * @param session
+	     * @param page
+	     * @param limit
+	     * @return
+	     */
+	    @RequestMapping("/searchswork")
+		public PageResult searchswork( HttpSession session,int page, int limit  ){
+			TbUser user=(TbUser) session.getAttribute("student");
+			return sworkService.findOtherWork(user.getId(), page, limit);
+		}
+	    @RequestMapping("/myhomework")
+	    public PageResult myhomework( HttpSession session,int page, int limit  ){
+	    	TbUser user=(TbUser) session.getAttribute("student");
+	    	return sworkService.findMyWork(user.getId(), page, limit);
+	    }
 		
 }

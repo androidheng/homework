@@ -4,10 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.homework.mapper.TbUserMapper;
-import com.homework.pojo.TbUser;
-import com.homework.pojo.TbUserExample;
-import com.homework.pojo.TbUserExample.Criteria;
+import com.homework.mapper.TbAdminMapper;
+import com.homework.pojo.TbAdmin;
+import com.homework.pojo.TbAdminExample;
+import com.homework.pojo.TbAdminExample.Criteria;
+import com.homework.service.AdminService;
 import com.homework.service.UserService;
 
 import entity.PageResult;
@@ -18,17 +19,17 @@ import entity.PageResult;
  *
  */
 @Service
-public class UserServiceImpl implements UserService {
+public class AdminServiceImpl implements AdminService {
 
 	@Autowired
-	private TbUserMapper userMapper;
+	private TbAdminMapper adminMapper;
 	
 	/**
 	 * 查询全部
 	 */
 	@Override
-	public List<TbUser> findAll() {
-		return userMapper.selectByExample(null);
+	public List<TbAdmin> findAll() {
+		return adminMapper.selectByExample(null);
 	}
 
 	/**
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public PageResult findPage(int pageNum, int pageSize) {
 		PageHelper.startPage(pageNum, pageSize);		
-		Page<TbUser> page=   (Page<TbUser>) userMapper.selectByExample(null);
+		Page<TbAdmin> page=   (Page<TbAdmin>) adminMapper.selectByExample(null);
 		return new PageResult(page.getTotal(), page.getResult());
 	}
 
@@ -45,8 +46,8 @@ public class UserServiceImpl implements UserService {
 	 * 增加
 	 */
 	@Override
-	public void add(TbUser user) {
-		userMapper.insert(user);		
+	public void add(TbAdmin user) {
+		adminMapper.insert(user);		
 	}
 
 	
@@ -54,8 +55,8 @@ public class UserServiceImpl implements UserService {
 	 * 修改
 	 */
 	@Override
-	public void update(TbUser user){
-		userMapper.updateByPrimaryKey(user);
+	public void update(TbAdmin user){
+		adminMapper.updateByPrimaryKey(user);
 	}	
 	
 	/**
@@ -64,8 +65,8 @@ public class UserServiceImpl implements UserService {
 	 * @return
 	 */
 	@Override
-	public TbUser findOne(Integer id){
-		return userMapper.selectByPrimaryKey(id);
+	public TbAdmin findOne(Integer id){
+		return adminMapper.selectByPrimaryKey(id);
 	}
 
 	/**
@@ -73,32 +74,32 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public void delete(Integer id) {
-		userMapper.deleteByPrimaryKey(id);
+		adminMapper.deleteByPrimaryKey(id);
 	}
 	
 	
 		@Override
-	public PageResult findPage(TbUser user, int pageNum, int pageSize) {
+	public PageResult findPage(TbAdmin user, int pageNum, int pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
 		
-		TbUserExample example=new TbUserExample();
+		TbAdminExample example=new TbAdminExample();
 		Criteria criteria = example.createCriteria();
 		
 		if(user!=null){			
 				
 		}
 		
-		Page<TbUser> page= (Page<TbUser>)userMapper.selectByExample(example);		
+		Page<TbAdmin> page= (Page<TbAdmin>)adminMapper.selectByExample(example);		
 		return new PageResult(page.getTotal(), page.getResult());
 	}
 
 		@Override
-		public TbUser login(TbUser user) {
-			TbUserExample example=new TbUserExample();
+		public TbAdmin login(TbAdmin user) {
+			TbAdminExample example=new TbAdminExample();
 			Criteria criteria = example.createCriteria();
 			criteria.andUsernameEqualTo(user.getUsername());
 			criteria.andPasswordEqualTo(user.getPassword());
-			List<TbUser> list = userMapper.selectByExample(example);
+			List<TbAdmin> list = adminMapper.selectByExample(example);
 			if(list.size()>0)
 				return list.get(0);
 			return null;

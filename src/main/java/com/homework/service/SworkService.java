@@ -65,9 +65,14 @@ public interface SworkService {
 
 
 	public PageResult find(Integer id, int page, int limit);
+	
+	public PageResult findOtherWork(Integer id, int pageNum,int pageSize);
 
 
 	public List<TbSwork> findExchange(Integer id);
+
+
+	public PageResult findMyWork(Integer id, int pageNum,int pageSize);
 
 
 

@@ -111,7 +111,6 @@ public class SworkServiceImpl implements SworkService {
 		public PageResult find(Integer id, int pageNum, int pageSize) {
 			
 			PageHelper.startPage(pageNum, pageSize);
-			
 			Page<TbSwork> page= (Page<TbSwork>)sworkMapper.find(id);		
 			return new PageResult(page.getTotal(), page.getResult());
 		}
@@ -122,6 +121,26 @@ public class SworkServiceImpl implements SworkService {
 			Criteria criteria = example.createCriteria();
 			criteria.andTtidEqualTo(id);
 			return sworkMapper.selectByExample(example);
+		}
+
+		@Override
+		public PageResult findOtherWork(Integer id, int pageNum, int pageSize) {
+			PageHelper.startPage(pageNum, pageSize);
+			TbSworkExample example=new TbSworkExample();
+			Criteria criteria = example.createCriteria();
+			criteria.andUid2EqualTo(id);
+			Page<TbSwork> page= (Page<TbSwork>)sworkMapper.selectByExample(example);		
+			return new PageResult(page.getTotal(), page.getResult());
+		}
+
+		@Override
+		public PageResult findMyWork(Integer id, int pageNum, int pageSize) {
+			PageHelper.startPage(pageNum, pageSize);
+			TbSworkExample example=new TbSworkExample();
+			Criteria criteria = example.createCriteria();
+			criteria.andUidEqualTo(id);
+			Page<TbSwork> page= (Page<TbSwork>)sworkMapper.selectByExample(example);		
+			return new PageResult(page.getTotal(), page.getResult());
 		}
 
 

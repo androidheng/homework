@@ -94,11 +94,11 @@
        </dependency>  
 	   
 	    <!-- 导入java ee jar 包 -->  
-    	<dependency>  
+    	<!-- <dependency>  
             <groupId>javax</groupId>  
             <artifactId>javaee-api</artifactId>  
             <version>7.0</version>  
-        </dependency>   
+        </dependency>   --> 
         
          <!-- 导入Mysql数据库链接jar包 -->  
         <dependency>  
@@ -128,17 +128,17 @@
 	    <groupId>commons-codec</groupId>
 	    <artifactId>commons-codec</artifactId>	  
 	</dependency> -->
-<!--  	<dependency>
+ 	<dependency>
 		<groupId>javax.servlet</groupId>
 		<artifactId>servlet-api</artifactId>	
 		<version>2.5</version>
 		<scope>provided</scope>
-	</dependency>   -->
+	</dependency>  
   </dependencies>
-  
-<!--   <build>
+  <!-- 配置Tomcat插件 -->
+  <build>
 		<plugins>			
-			配置Tomcat插件
+			
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
@@ -149,8 +149,8 @@
 				</configuration>
 			</plugin>
 		</plugins>
-    </build> -->
-      <build>
+    </build>
+  <!--     <build>
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
@@ -164,5 +164,5 @@
 				</configuration>
 			</plugin>
 		</plugins>
-	</build>
+	</build> -->
 </project>

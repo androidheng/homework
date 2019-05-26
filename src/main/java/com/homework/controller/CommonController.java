@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.homework.pojo.TbAdmin;
 import com.homework.pojo.TbTeacher;
 import com.homework.pojo.TbUser;
+import com.homework.service.AdminService;
 import com.homework.service.TeacherService;
 import com.homework.service.UserService;
 import com.homework.vo.LoginVo;
@@ -35,6 +37,8 @@ public class CommonController {
 	
 	@Autowired
 	private TeacherService teacherService;
+	@Autowired
+	private AdminService adminService;
 	
 	
 	/**
@@ -62,6 +66,18 @@ public class CommonController {
 			TbTeacher loginTeacher = teacherService.login(tbTeacher);
 			if(loginTeacher!=null) {
 				session.setAttribute("teacher", loginTeacher);	
+				return new Result(true, "登录成功");
+			}else {
+				return new Result(false, "登录失败");	
+			}
+			
+		}else if(loginVo.getUsertype().equals("2")) {
+			TbAdmin tbAdmin=new TbAdmin();
+			tbAdmin.setUsername(loginVo.getUsername());
+			tbAdmin.setPassword(loginVo.getPassword());
+			TbAdmin loginAdmin = adminService.login(tbAdmin);
+			if(loginAdmin!=null) {
+				session.setAttribute("admin", loginAdmin);	
 				return new Result(true, "登录成功");
 			}else {
 				return new Result(false, "登录失败");	

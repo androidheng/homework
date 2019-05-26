@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
+import com.homework.pojo.TbAdmin;
 import com.homework.pojo.TbTeacher;
 import com.homework.pojo.TbUser;
+import com.homework.service.AdminService;
 import com.homework.service.UserService;
 
 import entity.PageResult;
@@ -21,11 +23,13 @@ import entity.Result;
  *
  */
 @RestController
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/admin")
+public class AdminController {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private AdminService adminService;
 	
 	/**
 	 * 返回全部列表
@@ -89,9 +93,9 @@ public class UserController {
 	 * @return
 	 */
 	@RequestMapping("/update")
-	public Result update(@RequestBody TbUser user){
+	public Result update(@RequestBody TbAdmin user){
 		try {
-			userService.update(user);
+			adminService.update(user);
 			return new Result(true, "修改成功");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -138,7 +142,7 @@ public class UserController {
 	}
 	@RequestMapping("/myinfo")
 	public Result myinfo(HttpSession session){
-		TbUser loginUser=(TbUser) session.getAttribute("student");
+		TbAdmin loginUser=(TbAdmin) session.getAttribute("admin");
 		if(loginUser!=null) {
 			try {
 				return new Result(true, loginUser);

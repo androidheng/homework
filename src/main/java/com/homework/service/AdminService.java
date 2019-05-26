@@ -1,6 +1,6 @@
 package com.homework.service;
 import java.util.List;
-import com.homework.pojo.TbUser;
+import com.homework.pojo.TbAdmin;
 
 import entity.PageResult;
 /**
@@ -8,13 +8,13 @@ import entity.PageResult;
  * @author Administrator
  *
  */
-public interface UserService {
+public interface AdminService {
 
 	/**
 	 * 返回全部列表
 	 * @return
 	 */
-	public List<TbUser> findAll();
+	public List<TbAdmin> findAll();
 	
 	
 	/**
@@ -27,13 +27,13 @@ public interface UserService {
 	/**
 	 * 增加
 	*/
-	public void add(TbUser user);
+	public void add(TbAdmin user);
 	
 	
 	/**
 	 * 修改
 	 */
-	public void update(TbUser user);
+	public void update(TbAdmin user);
 	
 
 	/**
@@ -41,7 +41,7 @@ public interface UserService {
 	 * @param id
 	 * @return
 	 */
-	public TbUser findOne(Integer id);
+	public TbAdmin findOne(Integer id);
 	
 	
 	/**
@@ -56,9 +56,9 @@ public interface UserService {
 	 * @param pageSize 每页记录数
 	 * @return
 	 */
-	public PageResult findPage(TbUser user, int pageNum,int pageSize);
+	public PageResult findPage(TbAdmin user, int pageNum,int pageSize);
 
 
-	public TbUser login(TbUser user);
+	public TbAdmin login(TbAdmin user);
 	
 }

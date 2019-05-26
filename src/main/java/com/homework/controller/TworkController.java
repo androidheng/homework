@@ -1,4 +1,5 @@
 package com.homework.controller;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -6,13 +7,16 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
+import com.homework.pojo.TbSwork;
 import com.homework.pojo.TbTeacher;
 import com.homework.pojo.TbTwork;
 import com.homework.service.TworkService;
 import com.homework.util.DateUtils;
+import com.homework.vo.WorkVo;
 
 import entity.PageResult;
 import entity.Result;
@@ -133,7 +137,22 @@ public class TworkController {
 		TbTeacher tbTeacher=(TbTeacher) session.getAttribute("teacher");
 		TbTwork twork=new TbTwork();
 		twork.setTid(tbTeacher.getId());
-		return tworkService.findPage(twork, page, limit);		
+		
+		PageResult res = tworkService.findPage(twork, page, limit);
+		PageResult result=new PageResult(res.getCode(),res.getMsg(),res.getCount());
+		List<WorkVo> vos=new ArrayList<>();
+		List<TbTwork> works=res.getData();
+		for (TbTwork tbTwork : works) {
+			WorkVo vo=new WorkVo();
+			BeanUtils.copyProperties(tbTwork, vo);
+			  int end=DateUtils.compare_date(tbTwork.getEndtime());
+			  if(end<0) {
+				  vo.setOver("Y");
+			  }
+			vos.add(vo);
+		}
+		result.setData(vos);
+		return result;		
 	}
 	
 }

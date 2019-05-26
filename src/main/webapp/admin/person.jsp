@@ -15,29 +15,15 @@
      <div class="layui-content" id="box" style="display:none">
           <form class="layui-form" action="" lay-filter="formTest" id="addGoodsForm">
            <div class="layui-form-item">
-               <label class="layui-form-label">作业名称</label>
+               <label class="layui-form-label">用户名</label>
                <div class="layui-input-block">
-                  <input type="text" name="workname" id="workname" required  lay-verify="required" placeholder="请输入作业名称" autocomplete="off" class="layui-input">
+                  <input type="text" name="username" id="username" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
                </div>
            </div>
            <div class="layui-form-item">
-             <label class="layui-form-label">作业内容</label>
+             <label class="layui-form-label">密码</label>
                  <div class="layui-input-inline">
-                   <input type="text" name="content" id="content" required lay-verify="required" placeholder="请输入作业内容" autocomplete="off" class="layui-input">
-                 </div>
-           </div>
-           <div class="layui-form-item">
-              <label class="layui-form-label">作业科目</label>
-                <div class="layui-input-block">
-                   <select name="cid" id="cid" lay-verify="city" required lay-verify="required">
-                    
-                  </select>
-               </div>
-           </div>
-            <div class="layui-form-item">
-             <label class="layui-form-label">截止日期</label>
-                 <div class="layui-input-inline">
-                   <input type="text" name="endtime" id="endtime" required lay-verify="required"  autocomplete="off" class="layui-input">
+                   <input type="text" name="password" id="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
                  </div>
            </div>
            <div class="layui-form-item">
@@ -54,9 +40,9 @@
             <div class="pagewrap">
                 <span class="layui-breadcrumb">
                   <a>首页</a>
-                  <a>作业</a>
+                  <a>用户信息</a>
                 </span>
-                <h2 class="title">作业信息</h2>
+                <h2 class="title">用户信息</h2>
             </div>
         </div>
         <div class="layui-row">
@@ -70,28 +56,16 @@
         </div>
     </div>
    </div>
-  	<script src="<%=basePath%>assets/layui.all.js"></script>
      <script type="text/html" id="toolbarDemo">
      <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="add">添加作业</button>
+        <button class="layui-btn layui-btn-sm" lay-event="add">添加用户</button>
      </div>
     </script>
     <script type="text/html" id="barDemo">
        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
- 	  {{#  if(d.over == 'Y'){ }}
-		  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="fenpei">分发作业</a>
-	   {{#  } else { }}
-	   {{#  } }}
     </script>
      	<script src="<%=basePath%>assets/layui.all.js"></script>
-       <script type="text/html" id="titleTpl">
-      {{#  if(d.over == 'N'){ }}
-                 未结束
-      {{#  } else { }}
-                 已结束
-      {{#  } }}
-</script>
     <script>
   layui.use('table', function(){
       var table = layui.table,form = layui.form,$=layui.$;
@@ -99,13 +73,11 @@
        table.render({
            elem: '#demo'
           ,toolbar: '#toolbarDemo'
-          ,url:'<%=basePath%>twork/search'
+          ,url:'<%=basePath%>user/search'
           ,cols: [[ //标题栏
-             {field: 'workname', title: '作业名称', }
-            ,{field: 'content', title: '作业内容'}
-            ,{field: 'endtime', title: '截止时间'}
-            ,{field: 'over', title: '是否结束',templet: '#titleTpl'}
-            ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:250}
+             {field: 'username', title: '用户名', }
+            ,{field: 'password', title: '密码'}
+            ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
          ]]
         ,skin: 'line' //表格风格
         ,even: true
@@ -163,14 +135,14 @@
   	 	     	    elem: '#endtime', //指定元素
   	 	     	  });
   	 	          console.log(row)
-  	 	     	  row&&(row.cid = +row.cid)
+  	 	     	  row&&(row.id = +row.id)
   	 	          row?form.val('formTest', row): $("#addGoodsForm")[0].reset();
   	 	         
   	 	     	 //监听提交
                   form.on('submit(demo1)', function(data){
                 	  row&&(data.field.id = row.id)
                 	  $.ajax({
-                          url:" <%=basePath%>twork/addOrUpdate",
+                          url:" <%=basePath%>user/addOrUpdate",
                           type:'post',//method请求方式，get或者post
                           dataType:'json',//预期服务器返回的数据类型
                           data:JSON.stringify(data.field),
@@ -187,7 +159,6 @@
                     return false;
                   });
   	          });
-  	        	getoption(data)
   	        }
   	       ,end:function(index){
   	    	    $("#box").hide()
@@ -212,7 +183,7 @@
          if(obj.event === 'del'){
            layer.confirm('真的删除行么', function(index){
         	  $.ajax({
-                   url:"<%=basePath%>twork/delete",
+                   url:"<%=basePath%>user/delete",
                    type:'post',//method请求方式，get或者post
                    dataType:'json',//预期服务器返回的数据类型
                    data:JSON.stringify({id:data.id}),
@@ -231,28 +202,7 @@
            });
          } else if(obj.event === 'edit'){
         	 getCitys(data)
-         } else if(obj.event === 'fenpei'){
-        	 //getCitys(data)
-        	 alert("分配作业");
-        	  $.ajax({
-                  url:"<%=basePath%>swork/exchange",
-                  type:'post',//method请求方式，get或者post
-                  dataType:'json',//预期服务器返回的数据类型
-                  data:JSON.stringify({id:data.id}),
-                  contentType: "application/json; charset=utf-8",
-                  success:function(res){//res为相应体,function为回调函数
-               	  
-                      if(res.success){
-               		   layer.alert('分配成功',{icon:5});
-               		   layer.close(index)
-                          $(".layui-laypage-btn")[0].click();
-               	   }
-                  },
-                  error:function(){
-                      layer.alert('操作失败！！！',{icon:5});
-                  }
-                });
-         }
+         } 
        });
      
 });

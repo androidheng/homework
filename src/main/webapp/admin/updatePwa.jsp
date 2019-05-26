@@ -11,28 +11,10 @@
     <link rel="stylesheet" href="<%=basePath%>assets/css/login.css">
     <link rel="icon" href="/favicon.ico">
     <title>管理后台</title>
-    <style>
-       h4{
-         width:100%;
-         text-align:center;
-         margin-bottom:10px;
-       }
-       .layui-form-label{
-         text-align:left;
-       }
-       .layui-form-label{
-         width:60px;
-       
-       }
-       .layui-input-block{
-         margin-left:90px;
-       }
-    </style>
 </head>
 <body class="login-wrap">
     <div class="login-container">
         <form class="login-form layui-form"  action="">
-            <h4>管理后台</h4>
             <div class="layui-form-item">
                 <label class="layui-form-label">用户名</label>
                   <div class="layui-input-block">
@@ -45,62 +27,71 @@
                 <input type="password" name="password"  id="password" lay-verify="required" class="layui-input">
              </div>
            </div>
-           <div class="layui-form-item">
-             <label class="layui-form-label">角色类型</label>
-               <div class="layui-input-block">
-                    <select name="usertype" lay-verify="required">
-                        <option value=""></option>
-                        <option value="0">学生 </option>
-                        <option value="1">教师</option>
-                        <option value="2">管理员</option>
-                    </select>
-                 </div>
-            
-           </div>
-          <button type="button" class="login-button" lay-submit="" lay-filter="login">登录<i class="ai ai-enter"></i></button>
+            <button type="button" class="login-button" lay-submit="" lay-filter="login">提交<i class="ai ai-enter"></i></button>
         </form>
     </div>
 </body>
 <script src="<%=basePath%>assets/layui.js"></script>
 <script src="<%=basePath%>/js/login.js"></script>
-  <script>
+<script>
 	  layui.use(['form'], function(){
       var form = layui.form
       ,layer = layui.layer
       ,$ = layui.$
       //自定义验证规则
       form.verify({
-        
+        userName: function(value){
+          if(value.length < 3){
+            return '用户名至少得3个字符啊';
+          }
+        }
       });
-    
-     //监听提交
-     form.on('submit(login)', function(data){
-    	  let actions = {
-    		'0':'student',
-    		'1':'teacher',
-    		'2':'admin',
-    	  }
- 
+      getUserInfo()
+      function getUserInfo(){
     	  $.ajax({
-            url:"<%=basePath%>login",
+              url:" <%=basePath%>admin/myinfo",
+              type:'post',//method请求方式，get或者post
+              dataType:'json',//预期服务器返回的数据类型
+           
+              contentType: "application/json; charset=utf-8",
+              success:function(res){//res为相应体,function为回调函数
+                if(res.success){
+                  $("#username").val(res.data.username)
+                  $("#password").val(res.data.password)
+               }else{
+                layer.alert(res.message,{icon: 5});
+              }
+            },
+            error:function(){
+              layer.alert('操作失败！！！',{icon:5});
+            }
+          });
+      }
+      //监听提交
+      form.on('submit(login)', function(data){
+    	  $.ajax({
+            url:" <%=basePath%>admin/update",
             type:'post',//method请求方式，get或者post
             dataType:'json',//预期服务器返回的数据类型
-            data:JSON.stringify(data.field),//表格数据序列化
+            data:JSON.stringify({password:data.field.password}),//表格数据序列化
             contentType: "application/json; charset=utf-8",
             success:function(res){//res为相应体,function为回调函数
               if(res.success){
-                //layer.alert(res.message,{icon:1});
-                location.href="<%=basePath%>"+actions[data.field.usertype]+"/index.jsp";
-              
-              }else{
-                layer.alert(res.message,{icon: 5});
-              }
-           },
-           error:function(){
+               
+                location.href="<%=basePath%>student/index.jsp";
+             
+            }else{
+              layer.alert(res.message,{icon: 5});
+            }
+          },
+          error:function(){
             layer.alert('操作失败！！！',{icon:5});
           }
         });
-       
+        /*location.href = 'index.html'
+          layer.alert(JSON.stringify(data.field), {
+          title: '最终的提交信息'
+        })*/
         return false;
       });
      });
